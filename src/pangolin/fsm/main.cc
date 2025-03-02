@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
   std::cout << "max_size = " << k << "\n";
   std::cout << "min_support = " << minsup << "\n";
 
-  Graph g(argv[1], 0, 1);
+  Graph g(argv[1], 0, 1, 1, 1);
   g.computeLabelsFrequency();
   int nlabels = g.get_vertex_classes();
   g.print_meta_data();
