@@ -30,7 +30,7 @@ void triangle_warp_edge(int n_gpus, int nranks, int rank, Graph &g, uint64_t &to
   auto num_tasks = even_task_split(ndevices, nranks, rank, g, d_graphs);
 
   size_t nthreads = BLOCK_SIZE;
-  size_t nblocks = (num_tasks[0]-1)/WARPS_PER_BLOCK+1;
+  size_t nblocks = (num_tasks[0]-1)/WARPS_PER_BLOCK_S+1;
   set_nblocks(nthreads, nblocks);
   std::cout << head << "CUDA TC (" << nblocks << " CTAs, " << nthreads << " threads/CTA)\n";
   std::vector<AccType *> d_count(ndevices);

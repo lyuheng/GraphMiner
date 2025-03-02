@@ -7,11 +7,11 @@ __global__ void motif4_triangle(eidType ne, GraphGPU g, vidType *vlists, vidType
   int warp_id     = thread_id   / WARP_SIZE;                // global warp index
   int thread_lane = threadIdx.x & (WARP_SIZE-1);            // thread index within the warp
   int warp_lane   = threadIdx.x / WARP_SIZE;                // warp index within the CTA
-  int num_warps   = WARPS_PER_BLOCK * gridDim.x;            // total number of active warps
+  int num_warps   = WARPS_PER_BLOCK_S * gridDim.x;            // total number of active warps
   vidType* vlist = &vlists[int64_t(warp_id)*int64_t(max_deg)*2];
-  __shared__ vidType v0[WARPS_PER_BLOCK], v1[WARPS_PER_BLOCK];
-  __shared__ vidType v0_size[WARPS_PER_BLOCK], v1_size[WARPS_PER_BLOCK];
-  __shared__ vidType list_size[WARPS_PER_BLOCK][3];
+  __shared__ vidType v0[WARPS_PER_BLOCK_S], v1[WARPS_PER_BLOCK_S];
+  __shared__ vidType v0_size[WARPS_PER_BLOCK_S], v1_size[WARPS_PER_BLOCK_S];
+  __shared__ vidType list_size[WARPS_PER_BLOCK_S][3];
   vidType counts[3];
   for (int i = 0; i < 3; i++) counts[i] = 0;
   for (eidType eid = warp_id; eid < ne; eid += num_warps) {
@@ -62,11 +62,11 @@ __global__ void motif4_wedge(eidType ne, GraphGPU g, vidType *vlists, vidType ma
   int warp_id     = thread_id   / WARP_SIZE;                // global warp index
   int thread_lane = threadIdx.x & (WARP_SIZE-1);            // thread index within the warp
   int warp_lane   = threadIdx.x / WARP_SIZE;                // warp index within the CTA
-  int num_warps   = WARPS_PER_BLOCK * gridDim.x;            // total number of active warps
+  int num_warps   = WARPS_PER_BLOCK_S * gridDim.x;            // total number of active warps
   vidType* vlist  = &vlists[int64_t(warp_id)*int64_t(max_deg)*2];
-  __shared__ vidType v0[WARPS_PER_BLOCK], v1[WARPS_PER_BLOCK];
-  __shared__ vidType v0_size[WARPS_PER_BLOCK], v1_size[WARPS_PER_BLOCK];
-  __shared__ vidType list_size[WARPS_PER_BLOCK][3];
+  __shared__ vidType v0[WARPS_PER_BLOCK_S], v1[WARPS_PER_BLOCK_S];
+  __shared__ vidType v0_size[WARPS_PER_BLOCK_S], v1_size[WARPS_PER_BLOCK_S];
+  __shared__ vidType list_size[WARPS_PER_BLOCK_S][3];
   vidType counts[2];
   for (int i = 0; i < 2; i++) counts[i] = 0;
   for (eidType eid = warp_id; eid < ne; eid += num_warps) {

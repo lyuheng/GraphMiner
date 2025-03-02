@@ -80,7 +80,7 @@ void SglSolver(Graph &g, Pattern &p, uint64_t &total, int n_gpus, int chunk_size
   copy_time = t.Seconds();
 
   size_t nthreads = BLK_SZ;
-  size_t nblocks = (n_tasks_per_gpu-1)/WARPS_PER_BLOCK+1;
+  size_t nblocks = (n_tasks_per_gpu-1)/WARPS_PER_BLOCK_S+1;
   if (nblocks > 65536) nblocks = 65536;
   cudaDeviceProp deviceProp;
   CUDA_SAFE_CALL(cudaGetDeviceProperties(&deviceProp, 0));

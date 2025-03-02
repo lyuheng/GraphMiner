@@ -8,7 +8,7 @@ __global__ void rectangle_warp_edge_nested_cmap(eidType ne, vidType n, GraphGPU 
   unsigned thread_lane = threadIdx.x & (WARP_SIZE-1);            // thread index within the warp
   unsigned warp_lane   = threadIdx.x / WARP_SIZE;                // warp index within the CTA
   unsigned num_warps   = (BLK_SZ / WARP_SIZE) * gridDim.x;       // total number of active warps
-  __shared__ vidType bin_counts[WARPS_PER_BLOCK*NUM_BUCKETS];
+  __shared__ vidType bin_counts[WARPS_PER_BLOCK_S*NUM_BUCKETS];
   cmap.init_bin_counts(bin_counts);
  
   AccType counter = 0; 

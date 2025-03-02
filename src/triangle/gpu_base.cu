@@ -34,7 +34,7 @@ void TCSolver(Graph &g, uint64_t &total, int, int) {
   auto nnz = gg.init_edgelist(g);
   std::cout << "Edge parallel: edgelist size = " << nnz << "\n";
   size_t nthreads = BLOCK_SIZE;
-  size_t nblocks = (ne-1)/WARPS_PER_BLOCK+1;
+  size_t nblocks = (ne-1)/WARPS_PER_BLOCK_S+1;
   if (nblocks > 65536) nblocks = 65536;
   cudaDeviceProp deviceProp;
   CUDA_SAFE_CALL(cudaGetDeviceProperties(&deviceProp, 0));

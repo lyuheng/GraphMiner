@@ -25,9 +25,9 @@ void CliqueSolver(Graph &g, int k, uint64_t &total, int, int) {
 
   GraphGPU gg(g);
   gg.init_edgelist(g);
-  size_t nwarps = WARPS_PER_BLOCK;
+  size_t nwarps = WARPS_PER_BLOCK_S;
   size_t nthreads = BLK_SZ;
-  size_t nblocks = (ne-1)/WARPS_PER_BLOCK+1;
+  size_t nblocks = (ne-1)/WARPS_PER_BLOCK_S+1;
   size_t per_block_vlist_size = nwarps * size_t(k-3) * size_t(md) * sizeof(vidType);
   if (nblocks > 65536) nblocks = 65536;
   size_t nb = (memsize - mem_graph) / per_block_vlist_size;

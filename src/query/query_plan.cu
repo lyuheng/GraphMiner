@@ -211,7 +211,7 @@ uint64_t QueryPlan::exploreGQL(const Graph *dg, const Pattern *qg, VertexLists &
 
   size_t nthreads = BLOCK_SIZE;
   size_t nwarps = BLK_SZ/WARP_SIZE;
-  size_t nblocks = (num-1)/WARPS_PER_BLOCK+1;
+  size_t nblocks = (num-1)/WARPS_PER_BLOCK_S+1;
   if (nblocks > 65536) nblocks = 65536;
   cudaDeviceProp deviceProp;
   CUDA_SAFE_CALL(cudaGetDeviceProperties(&deviceProp, 0));
@@ -304,7 +304,7 @@ uint64_t QueryPlan::exploreLFTJGPU(const Graph *dg, const Pattern *qg, VertexLis
 
   size_t nthreads = BLOCK_SIZE;
   size_t nwarps = BLK_SZ/WARP_SIZE;
-  size_t nblocks = (num-1)/WARPS_PER_BLOCK+1;
+  size_t nblocks = (num-1)/WARPS_PER_BLOCK_S+1;
   if (nblocks > 65536) nblocks = 65536;
   cudaDeviceProp deviceProp;
   CUDA_SAFE_CALL(cudaGetDeviceProperties(&deviceProp, 0));

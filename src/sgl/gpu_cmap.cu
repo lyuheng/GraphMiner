@@ -30,11 +30,11 @@ void SglSolver(Graph &g, Pattern &p, uint64_t &total, int) {
 
   int k = 4;
   if (p.is_house() || p.is_pentagon()) k = 5;
-  size_t nwarps = WARPS_PER_BLOCK;
+  size_t nwarps = WARPS_PER_BLOCK_S;
   size_t per_block_vlist_size = nwarps * size_t(k-3) * size_t(md) * sizeof(vidType);
   size_t per_block_cmap_size = nwarps * size_t(nv) * sizeof(cmap_vt);
   size_t nthreads = BLK_SZ;
-  size_t nblocks = (nnz-1)/WARPS_PER_BLOCK+1;
+  size_t nblocks = (nnz-1)/WARPS_PER_BLOCK_S+1;
   if (nblocks > 65536) nblocks = 65536;
   cudaDeviceProp deviceProp;
   CUDA_SAFE_CALL(cudaGetDeviceProperties(&deviceProp, 0));

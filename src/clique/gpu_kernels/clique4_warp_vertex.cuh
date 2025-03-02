@@ -10,7 +10,7 @@ clique4_warp_vertex(vidType nv, GraphGPU g, vidType *vlists, vidType max_deg, Ac
   int num_warps   = (BLK_SZ / WARP_SIZE) * gridDim.x;
   vidType *vlist  = &vlists[int64_t(warp_id)*int64_t(max_deg)];
   AccType counter = 0;
-  //__shared__ vidType list_size[WARPS_PER_BLOCK];
+  //__shared__ vidType list_size[WARPS_PER_BLOCK_S];
   for (auto v0 = warp_id; v0 < nv; v0 += num_warps) {
     auto v0_ptr = g.N(v0);
     auto v0_size = g.get_degree(v0);

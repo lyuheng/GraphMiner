@@ -8,7 +8,7 @@ house_warp_edge_nested(eidType ne, GraphGPU g, vidType *vlist, vidType max_deg, 
   int thread_lane = threadIdx.x & (WARP_SIZE-1);            // thread index within the warp
   int warp_lane   = threadIdx.x / WARP_SIZE;                // warp index within the CTA
   int num_warps   = (BLK_SZ / WARP_SIZE) * gridDim.x;       // total number of active warps
-  __shared__ vidType vlist_sizes[WARPS_PER_BLOCK];
+  __shared__ vidType vlist_sizes[WARPS_PER_BLOCK_S];
   vidType ancestors[MAX_PATTERN_SIZE];
   AccType counter = 0; 
   unsigned begin = warp_id*max_deg;

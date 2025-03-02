@@ -5,11 +5,11 @@ cycle4_warp_edge(eidType ne, GraphGPU g, vidType *vlists, vidType max_deg, AccTy
   int warp_id     = thread_id   / WARP_SIZE;                // global warp index
   int thread_lane = threadIdx.x & (WARP_SIZE-1);            // thread index within the warp
   int warp_lane   = threadIdx.x / WARP_SIZE;                // warp index within the CTA
-  int num_warps   = WARPS_PER_BLOCK * gridDim.x;            // total number of active warps
+  int num_warps   = WARPS_PER_BLOCK_S * gridDim.x;            // total number of active warps
   vidType* vlist  = &vlists[int64_t(warp_id)*int64_t(max_deg)*2];
-  __shared__ vidType v0[WARPS_PER_BLOCK], v1[WARPS_PER_BLOCK];
-  __shared__ vidType v0_size[WARPS_PER_BLOCK], v1_size[WARPS_PER_BLOCK];
-  __shared__ vidType list_size[WARPS_PER_BLOCK][2];
+  __shared__ vidType v0[WARPS_PER_BLOCK_S], v1[WARPS_PER_BLOCK_S];
+  __shared__ vidType v0_size[WARPS_PER_BLOCK_S], v1_size[WARPS_PER_BLOCK_S];
+  __shared__ vidType list_size[WARPS_PER_BLOCK_S][2];
   vidType count = 0;
   for (eidType eid = warp_id; eid < ne; eid += num_warps) {
     if (thread_lane == 0) {

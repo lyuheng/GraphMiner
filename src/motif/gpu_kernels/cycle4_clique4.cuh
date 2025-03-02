@@ -9,7 +9,7 @@ __global__ void cycle4_clique4(eidType ne, GraphGPU g, vidType* vlists, vidType 
   vidType* vlist = &vlists[int64_t(warp_id)*int64_t(max_deg)*2];
   AccType counts[2];
   for (int i = 0; i < 2; i++) counts[i] = 0;
-  __shared__ vidType list_size[WARPS_PER_BLOCK][2];
+  __shared__ vidType list_size[WARPS_PER_BLOCK_S][2];
   for (eidType eid = warp_id; eid < ne; eid += num_warps) {
     auto v0 = g.get_src(eid);
     auto v1 = g.get_dst(eid);

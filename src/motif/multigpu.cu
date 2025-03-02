@@ -92,8 +92,8 @@ void MotifSolver(Graph &g, int k, std::vector<uint64_t> &accum, int n_gpus, int 
   edgelist_copy_time = t.Seconds();
 
   size_t nthreads = BLOCK_SIZE;
-  size_t nwarps = WARPS_PER_BLOCK;
-  size_t nblocks = (n_tasks_per_gpu-1)/WARPS_PER_BLOCK+1;
+  size_t nwarps = WARPS_PER_BLOCK_S;
+  size_t nblocks = (n_tasks_per_gpu-1)/WARPS_PER_BLOCK_S+1;
   size_t n_lists = 2; // for 4-motif
   if (k == 3) n_lists = 0;
   size_t per_block_vlist_size = nwarps * n_lists * size_t(md) * sizeof(vidType);

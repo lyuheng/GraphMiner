@@ -39,12 +39,12 @@ void MotifSolver(Graph &g, int k, std::vector<uint64_t> &accum, int, int) {
   CUDA_SAFE_CALL(cudaMalloc((void **)&d_accumulators, sizeof(AccType) * npatterns));
   clear<<<1, npatterns>>>(d_accumulators);
  
-  size_t nwarps = WARPS_PER_BLOCK;
+  size_t nwarps = WARPS_PER_BLOCK_S;
   size_t n_lists = 2;
   if (k == 3) n_lists = 0;
   size_t per_block_vlist_size = nwarps * n_lists * size_t(md) * sizeof(vidType);
   size_t nthreads = BLOCK_SIZE;
-  size_t nblocks = (ne-1)/WARPS_PER_BLOCK+1;
+  size_t nblocks = (ne-1)/WARPS_PER_BLOCK_S+1;
   if (nblocks > 65536) nblocks = 65536;
   if (k > 3) {
     size_t nb = (memsize*0.9 - mem_graph) / per_block_vlist_size;

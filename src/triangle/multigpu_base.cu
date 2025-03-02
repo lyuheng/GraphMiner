@@ -59,7 +59,7 @@ void TCSolver(Graph &g, uint64_t &total, int n_gpus, int chunk_size) {
 
   size_t nthreads = BLOCK_SIZE;
   std::vector<AccType> h_counts(ndevices, 0);
-  size_t nblocks = 65536; //(n_tasks_per_gpu-1)/WARPS_PER_BLOCK+1;
+  size_t nblocks = 65536; //(n_tasks_per_gpu-1)/WARPS_PER_BLOCK_S+1;
   //if (nblocks > 65536) nblocks = 65536;
   cudaDeviceProp deviceProp;
   CUDA_SAFE_CALL(cudaGetDeviceProperties(&deviceProp, 0));

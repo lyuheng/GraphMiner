@@ -3,11 +3,11 @@ __forceinline__ __device__ unsigned work_stealing(Status *status, vidType *vlist
   unsigned thread_lane = threadIdx.x & (WARP_SIZE-1);            // thread index within the warp
   unsigned warp_lane   = threadIdx.x / WARP_SIZE;                // warp index within the CTA
   //vidType max_size = 0;
-  //unsigned victim = WARPS_PER_BLOCK;
-  __shared__ bool succeed[WARPS_PER_BLOCK];     // whether the stealing is successful
-  __shared__ vidType max_size[WARPS_PER_BLOCK]; // the remaining number of tasks of the victim warp
-  //__shared__ vidType count[WARPS_PER_BLOCK];    // the total number of tasks of the victim warp
-  __shared__ unsigned victim[WARPS_PER_BLOCK];  // warp_lane of the victim warp
+  //unsigned victim = WARPS_PER_BLOCK_S;
+  __shared__ bool succeed[WARPS_PER_BLOCK_S];     // whether the stealing is successful
+  __shared__ vidType max_size[WARPS_PER_BLOCK_S]; // the remaining number of tasks of the victim warp
+  //__shared__ vidType count[WARPS_PER_BLOCK_S];    // the total number of tasks of the victim warp
+  __shared__ unsigned victim[WARPS_PER_BLOCK_S];  // warp_lane of the victim warp
   __shared__ unsigned stealer;
 
   // find a victim who has the most tasks
@@ -15,8 +15,8 @@ __forceinline__ __device__ unsigned work_stealing(Status *status, vidType *vlist
     succeed[warp_lane] = false;
     vlist_sizes[warp_lane] = 0;
     max_size[warp_lane] = 0;
-    victim[warp_lane] = WARPS_PER_BLOCK;
-    for (int wid = 0; wid < WARPS_PER_BLOCK; wid++) {
+    victim[warp_lane] = WARPS_PER_BLOCK_S;
+    for (int wid = 0; wid < WARPS_PER_BLOCK_S; wid++) {
       if (wid != warp_lane && status[wid] == Working) {
         vlist_sizes[warp_lane] = vlist_sizes[wid];
         auto num = vlist_sizes[wid] - idx[wid];
@@ -33,18 +33,18 @@ __forceinline__ __device__ unsigned work_stealing(Status *status, vidType *vlist
   current_v1 = v1[victim[warp_lane]];
 
   // only one warp in the thread block can steal at a time
-  if (stealer >= WARPS_PER_BLOCK || status[stealer] != Idle)
+  if (stealer >= WARPS_PER_BLOCK_S || status[stealer] != Idle)
     if (thread_lane == 0) stealer = warp_lane;
 
   // update stealer's status
   auto steal_num = max_size[warp_lane]/2;
-  if (warp_lane == stealer && steal_num > 5 && victim[warp_lane] != WARPS_PER_BLOCK) {
+  if (warp_lane == stealer && steal_num > 5 && victim[warp_lane] != WARPS_PER_BLOCK_S) {
     //if (thread_lane == 0) printf("%d tasks to steal from warp %d to warp %d\n", steal_num, victim[warp_lane], warp_lane);
     // split half of the remaining tasks from the victim
     if (vlist_sizes[victim[warp_lane]] == vlist_sizes[warp_lane]) {
       auto old_value = atomicCAS(&vlist_sizes[victim[warp_lane]], vlist_sizes[warp_lane], vlist_sizes[warp_lane] - steal_num);
       if (old_value == vlist_sizes[warp_lane]) {
-      //if (atomicCAS(&stealer, warp_lane, WARPS_PER_BLOCK) == warp_lane) {
+      //if (atomicCAS(&stealer, warp_lane, WARPS_PER_BLOCK_S) == warp_lane) {
         // make sure the vistim is still working on the current task
         if (current_v0 == v0[victim[warp_lane]] && current_v1 == v1[victim[warp_lane]]) {
           succeed[warp_lane] = true;
@@ -67,7 +67,7 @@ __forceinline__ __device__ unsigned work_stealing(Status *status, vidType *vlist
   }
   __syncwarp();
   if (!succeed[warp_lane] && thread_lane == 0) {
-    victim[warp_lane] = WARPS_PER_BLOCK;
+    victim[warp_lane] = WARPS_PER_BLOCK_S;
     vlist_sizes[warp_lane] = 0;
   }
   __syncwarp();
@@ -84,13 +84,13 @@ __global__ void rectangle_warp_edge_nested_balanced(eidType ne, GraphGPU g, AccT
   unsigned num_warps   = (BLK_SZ / WARP_SIZE) * gridDim.x;       // total number of active warps
 
   __shared__ bool all_done; // all warp in the same thread block are done
-  __shared__ int depth[WARPS_PER_BLOCK];
-  __shared__ Status status[WARPS_PER_BLOCK];
-  __shared__ vidType v0[WARPS_PER_BLOCK], v1[WARPS_PER_BLOCK];
-  __shared__ vidType v0_size[WARPS_PER_BLOCK], v1_size[WARPS_PER_BLOCK];
-  __shared__ eidType eid[WARPS_PER_BLOCK];
-  __shared__ vidType vlist_sizes[WARPS_PER_BLOCK];
-  __shared__ vidType idx[WARPS_PER_BLOCK];
+  __shared__ int depth[WARPS_PER_BLOCK_S];
+  __shared__ Status status[WARPS_PER_BLOCK_S];
+  __shared__ vidType v0[WARPS_PER_BLOCK_S], v1[WARPS_PER_BLOCK_S];
+  __shared__ vidType v0_size[WARPS_PER_BLOCK_S], v1_size[WARPS_PER_BLOCK_S];
+  __shared__ eidType eid[WARPS_PER_BLOCK_S];
+  __shared__ vidType vlist_sizes[WARPS_PER_BLOCK_S];
+  __shared__ vidType idx[WARPS_PER_BLOCK_S];
   if (thread_lane == 0) {
     eid[warp_lane] = warp_id;
     vlist_sizes[warp_lane] = 0;
@@ -99,7 +99,7 @@ __global__ void rectangle_warp_edge_nested_balanced(eidType ne, GraphGPU g, AccT
     else status[warp_lane] = Working;
   }
   if (threadIdx.x == 0) all_done = false;
-  //if (threadIdx.x < WARPS_PER_BLOCK) {
+  //if (threadIdx.x < WARPS_PER_BLOCK_S) {
   //  v0[threadIdx.x] = g.get_src(eid[thread_id]);
   //  v1[threadIdx.x] = g.get_src(eid[thread_id]);
   //}
@@ -158,7 +158,7 @@ __global__ void rectangle_warp_edge_nested_balanced(eidType ne, GraphGPU g, AccT
     if (status[warp_lane] == Idle) {
       // check if all warps are done
       bool others_done = true;
-      for (int i = 0; i < WARPS_PER_BLOCK; i++) {
+      for (int i = 0; i < WARPS_PER_BLOCK_S; i++) {
         if (status[i] != Idle) {
           others_done = false;
           break;
@@ -170,7 +170,7 @@ __global__ void rectangle_warp_edge_nested_balanced(eidType ne, GraphGPU g, AccT
       } else { // if another warp is still running, steal some work form its task queue
         auto victim = work_stealing(status, vlist_sizes, idx, v0, v1);
         assert(victim != warp_lane);
-        if (victim != WARPS_PER_BLOCK) { // stealing succeed
+        if (victim != WARPS_PER_BLOCK_S) { // stealing succeed
           if (thread_lane == 0) {
             v0_size[warp_lane] = g.getOutDegree(v0[warp_lane]);
             v1_size[warp_lane] = g.getOutDegree(v1[warp_lane]);

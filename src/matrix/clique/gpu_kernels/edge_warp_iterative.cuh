@@ -11,7 +11,7 @@ __global__ void warp_edge_iterative(eidType ne, int k, GraphGPU g, vidType *vlis
   Status state = Idle;
   vidType idx[MAX_PATTERN_SIZE-2];
   vidType stack[MAX_PATTERN_SIZE];
-  __shared__ vidType vlist_sizes[WARPS_PER_BLOCK][MAX_PATTERN_SIZE-2];
+  __shared__ vidType vlist_sizes[WARPS_PER_BLOCK_S][MAX_PATTERN_SIZE-2];
  
   AccType counter = 0;
   for (eidType eid = warp_id; eid < ne; eid += num_warps) {

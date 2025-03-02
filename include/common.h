@@ -56,7 +56,7 @@ typedef std::unordered_map<vlabel_t, int> nlf_map;
 #define LOG_WARP_SIZE 5
 #define DIVIDE_INTO(x,y) ((x + y - 1)/y)
 #define MAX_THREADS (30 * 1024)
-#define WARPS_PER_BLOCK (BLOCK_SIZE / WARP_SIZE)
+#define WARPS_PER_BLOCK_S (BLOCK_SIZE / WARP_SIZE)
 #define MAX_BLOCKS (MAX_THREADS / BLOCK_SIZE)
 #define NUM_WARPS (BLOCK_SIZE / WARP_SIZE)
 #define BYTESTOMB(memory_cost) ((memory_cost)/(double)(1024 * 1024))

@@ -3,7 +3,7 @@ __global__ void motif3_warp_edge(eidType ne, GraphGPU g, vidType *vlist, vidType
   __shared__ typename BlockReduce::TempStorage temp_storage;
   int thread_id = blockIdx.x * blockDim.x + threadIdx.x; // global thread id
   int warp_id   = thread_id / WARP_SIZE;                 // global warp index
-  int num_warps = WARPS_PER_BLOCK * gridDim.x;           // total number of active warps
+  int num_warps = WARPS_PER_BLOCK_S * gridDim.x;           // total number of active warps
   AccType tri_count = 0;
   AccType wed_count = 0;
   for (eidType eid = warp_id; eid < ne; eid += num_warps) {

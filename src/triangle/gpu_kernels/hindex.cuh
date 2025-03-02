@@ -14,7 +14,7 @@ __global__ void hindex_warp_edge(eidType ne, GraphGPU g, vidType *bins, AccType 
   int thread_lane = threadIdx.x & (WARP_SIZE-1);            // thread index within the warp
   int warp_lane   = threadIdx.x / WARP_SIZE;                // warp index within the CTA
   int bin_offset   = warp_lane * NUM_BUCKETS;
-  __shared__ vidType bin_counts[WARPS_PER_BLOCK*NUM_BUCKETS];
+  __shared__ vidType bin_counts[WARPS_PER_BLOCK_S*NUM_BUCKETS];
 
   AccType count = 0;
   for (eidType eid = warp_id; eid < ne; eid += num_warps) {

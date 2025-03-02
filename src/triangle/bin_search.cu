@@ -26,7 +26,7 @@ void TCSolver(Graph &g, uint64_t &total, int, int) {
 #ifdef USE_CTA
   size_t nblocks = ne;
 #else
-  size_t nblocks = (ne-1)/WARPS_PER_BLOCK+1;
+  size_t nblocks = (ne-1)/WARPS_PER_BLOCK_S+1;
 #endif
   if (nblocks > 65536) nblocks = 65536;
   cudaDeviceProp deviceProp;

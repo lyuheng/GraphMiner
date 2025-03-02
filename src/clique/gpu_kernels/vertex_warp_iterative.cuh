@@ -13,7 +13,7 @@ __global__ void warp_vertex(int nv, int k, GraphGPU g, vidType *vlist, unsigned 
   vidType idx[MAX_PATTERN_SIZE-2];
   vidType stack[MAX_PATTERN_SIZE];
   AccType local_num = 0;
-  __shared__ vidType vlist_sizes[WARPS_PER_BLOCK][MAX_PATTERN_SIZE-2];
+  __shared__ vidType vlist_sizes[WARPS_PER_BLOCK_S][MAX_PATTERN_SIZE-2];
  
   AccType counter = 0;
   for (auto v0 = warp_id; v0 < nv; v0 += num_warps) {

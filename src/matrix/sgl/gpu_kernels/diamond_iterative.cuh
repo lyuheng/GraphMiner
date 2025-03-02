@@ -11,7 +11,7 @@ __global__ void diamond_warp_edge(eidType ne, int k, GraphGPU g, vidType *vlist,
   Status state = Idle;
   vidType idx[MAX_PATTERN_SIZE-2];
   vidType stack[MAX_PATTERN_SIZE];
-  __shared__ vidType vlist_sizes[WARPS_PER_BLOCK][MAX_PATTERN_SIZE-2];
+  __shared__ vidType vlist_sizes[WARPS_PER_BLOCK_S][MAX_PATTERN_SIZE-2];
  
   for (eidType eid = warp_id; eid < ne; eid += num_warps) {
     auto v0 = g.get_src(eid);

@@ -10,7 +10,7 @@ clique4_warp_edge(eidType ne, GraphGPU g, vidType *vlists, vidType max_deg, AccT
   int num_warps   = (BLK_SZ / WARP_SIZE) * gridDim.x;       // total number of active warps
   vidType *vlist  = &vlists[int64_t(warp_id)*int64_t(max_deg)];
   AccType counter = 0;
-  __shared__ vidType list_size[WARPS_PER_BLOCK];
+  __shared__ vidType list_size[WARPS_PER_BLOCK_S];
   for (eidType eid = warp_id; eid < ne; eid += num_warps) {
     auto v0 = g.get_src(eid);
     auto v1 = g.get_dst(eid);

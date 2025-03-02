@@ -22,7 +22,7 @@ void TCSolver(Graph &g, uint64_t &total, int, int) {
   auto nnz = gg.init_edgelist(g);
   std::cout << "Edge parallel: edgelist size = " << nnz << "\n";
   size_t nthreads = BLOCK_SIZE;
-  size_t nblocks = (ne-1)/WARPS_PER_BLOCK+1;
+  size_t nblocks = (ne-1)/WARPS_PER_BLOCK_S+1;
   if (nblocks > 65536) nblocks = 65536;
   cudaDeviceProp deviceProp;
   CUDA_SAFE_CALL(cudaGetDeviceProperties(&deviceProp, 0));
@@ -33,7 +33,7 @@ void TCSolver(Graph &g, uint64_t &total, int, int) {
   std::cout << "CUDA triangle counting (" << nblocks << " CTAs, " << nthreads << " threads/CTA)\n";
 
   vidType *bins;
-  auto bins_mem = WARPS_PER_BLOCK * nblocks * NUM_BUCKETS * BUCKET_SIZE * sizeof(vidType);
+  auto bins_mem = WARPS_PER_BLOCK_S * nblocks * NUM_BUCKETS * BUCKET_SIZE * sizeof(vidType);
   std::cout << "bin memory allocation: " << bins_mem/1024/1024 << " MB\n";
   CUDA_SAFE_CALL(cudaMalloc((void**)&bins, bins_mem));
   CUDA_SAFE_CALL(cudaMemset(bins, 0, bins_mem));

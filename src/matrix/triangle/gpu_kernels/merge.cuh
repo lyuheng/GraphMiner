@@ -3,7 +3,7 @@ __global__ void merge_warp_edge(eidType ne, GraphGPU g, AccType *total) {
   __shared__ typename BlockReduce::TempStorage temp_storage;
   int thread_id   = blockIdx.x * blockDim.x + threadIdx.x; // global thread index
   int warp_id     = thread_id   / WARP_SIZE;               // global warp index
-  int num_warps = WARPS_PER_BLOCK * gridDim.x;             // total number of warps
+  int num_warps = WARPS_PER_BLOCK_S * gridDim.x;             // total number of warps
   AccType count = 0;
   for (eidType eid = warp_id; eid < ne; eid += num_warps) {
     auto v = g.get_src(eid);
